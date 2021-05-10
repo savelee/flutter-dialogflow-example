@@ -1,4 +1,4 @@
-name: flutter_dialogflow_agent
+name: testapp
 description: A new Flutter project.
 
 # The following line prevents the package from being accidentally published to
@@ -22,9 +22,7 @@ environment:
 
 dependencies:
   sound_stream: ^0.2.0
-  dialogflow_grpc: 0.2.9
-  #dialogflow_grpc:
-  #  path: ../../dialogflow-flutter-grpc
+  dialogflow_grpc: ^0.2.9
   rxdart: ^0.24.1
   flutter:
     sdk: flutter

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
-project(flutter_dialogflow_agent LANGUAGES CXX)
+project(testapp LANGUAGES CXX)
 
-set(BINARY_NAME "flutter_dialogflow_agent")
+set(BINARY_NAME "testapp")
 
 cmake_policy(SET CMP0063 NEW)
 

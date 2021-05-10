@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_dialogflow_agent/chat.dart';
+import 'chat.dart';
 
 void main() {
   runApp(MyApp());
@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Dialogflow Flutter App',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.orange,
       ),
-      home: MyHomePage(title: 'Flutter Dialogflow Agent'),
+      home: MyHomePage(title: 'Dialogflow Flutter App'),
     );
   }
 }

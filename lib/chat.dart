@@ -18,8 +18,10 @@ import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:sound_stream/sound_stream.dart';
 
-import 'package:dialogflow_grpc/dialogflow_grpc.dart';
+// TODO import Dialogflow
+import 'package:dialogflow_grpc/v2beta1.dart';
 import 'package:dialogflow_grpc/generated/google/cloud/dialogflow/v2beta1/session.pb.dart';
+import 'package:dialogflow_grpc/dialogflow_grpc.dart';
 
 class Chat extends StatefulWidget {
   Chat({Key key}) : super(key: key);
@@ -39,6 +41,7 @@ class _ChatState extends State<Chat> {
   StreamSubscription<List<int>> _audioStreamSubscription;
   BehaviorSubject<List<int>> _audioStream;
 
+  // TODO DialogflowGrpc class instance
   DialogflowGrpcV2Beta1 dialogflow;
 
   @override
@@ -63,10 +66,9 @@ class _ChatState extends State<Chat> {
         });
     });
 
-    await Future.wait([
-      _recorder.initialize(),
-    ]);
+    await Future.wait([_recorder.initialize()]);
 
+    // TODO Get a Service account
     // Get a Service account
     final serviceAccount = ServiceAccount.fromString(
         '${(await rootBundle.loadString('assets/credentials.json'))}');
@@ -84,6 +86,7 @@ class _ChatState extends State<Chat> {
     print(text);
     _textController.clear();
 
+    //TODO Dialogflow Code
     ChatMessage message = ChatMessage(
       text: text,
       name: "You",
@@ -94,8 +97,15 @@ class _ChatState extends State<Chat> {
       _messages.insert(0, message);
     });
 
-    DetectIntentResponse data = await dialogflow.detectIntent(text, 'en-US');
-    String fulfillmentText = data.queryResult.fulfillmentText;
+    String fulfillmentText = "";
+    try {
+      DetectIntentResponse data = await dialogflow.detectIntent(text, 'en-US');
+      fulfillmentText = data.queryResult.fulfillmentText;
+      print(fulfillmentText);
+    } catch (e) {
+      print(e);
+    }
+
     if (fulfillmentText.isNotEmpty) {
       ChatMessage botMessage = ChatMessage(
         text: fulfillmentText,
@@ -118,7 +128,7 @@ class _ChatState extends State<Chat> {
       _audioStream.add(data);
     });
 
-    // Create an audio InputConfig
+    // TODO Create SpeechContexts
     var biasList = SpeechContextV2Beta1(phrases: [
       'Dialogflow CX',
       'Dialogflow Essentials',
@@ -126,33 +136,28 @@ class _ChatState extends State<Chat> {
       'HIPAA'
     ], boost: 20.0);
 
+    // TODO Create and audio InputConfig
     // See: https://cloud.google.com/dialogflow/es/docs/reference/rpc/google.cloud.dialogflow.v2#google.cloud.dialogflow.v2.InputAudioConfig
     var config = InputConfigV2beta1(
         encoding: 'AUDIO_ENCODING_LINEAR_16',
         languageCode: 'en-US',
-        sampleRateHertz: 16000
-        // model: 'phone_call',
         // speechModelVariant: 'USE_ENHANCED',
-        //singleUtterance: false,
-        //speechContexts: [biasList]
-        );
+        // model: 'command_and_search',
+        sampleRateHertz: 16000,
+        singleUtterance: false,
+        speechContexts: [biasList]);
 
+    // TODO Make the streamingDetectIntent call, with the InputConfig and the audioStream
     final responseStream =
         dialogflow.streamingDetectIntent(config, _audioStream);
 
+    // TODO Get the transcript and detectedIntent and show on screen
     // Get the transcript and detectedIntent and show on screen
     responseStream.listen((data) {
-      print(data);
       setState(() {
-        //print(data);
         String transcript = data.recognitionResult.transcript;
         String queryText = data.queryResult.queryText;
-        String intent = data.queryResult.intent.displayName;
         String fulfillmentText = data.queryResult.fulfillmentText;
-
-        print(transcript);
-        print(queryText);
-        print(intent);
 
         if (fulfillmentText.isNotEmpty) {
           ChatMessage message = new ChatMessage(
@@ -178,7 +183,7 @@ class _ChatState extends State<Chat> {
     }, onError: (e) {
       print(e);
     }, onDone: () {
-      print('done');
+      //print('done');
     });
   }
 
@@ -270,7 +275,7 @@ class ChatMessage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
-            Text(this.name, style: Theme.of(context).textTheme.subtitle1),
+            Text(name, style: Theme.of(context).textTheme.subtitle1),
             Container(
               margin: const EdgeInsets.only(top: 5.0),
               child: Text(text),

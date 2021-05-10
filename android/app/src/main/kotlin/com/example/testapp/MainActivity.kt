@@ -1,4 +1,4 @@
-package com.example.flutter_dialogflow_agent
+package com.example.testapp
 
 import io.flutter.embedding.android.FlutterActivity
 
